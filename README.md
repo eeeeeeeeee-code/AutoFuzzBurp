@@ -1,7 +1,10 @@
-﻿# UploadFuzzBurp
+﻿# AutoBurpFuzz
 
 # 简介
-  根据T3nk0的进行编写java版本的burp文件上传fuzz，优化了一些逻辑、以及一些绕过的功能点，感谢T3nk0的开源精神，以前也想写这种upload fuzz的工具，但是上传包多样就没有搞了，没想到还有这种方法，学习到了。
+1.tls and http 浏览器指纹绕过
+2.被动指纹扫描
+3.文件上传 Intruder fuzz
+4.手机号 Intruder fuzz
 
 # 本人环境参考
 > burp环境burpsuite 2025.2
@@ -10,19 +13,14 @@
 >   java17编写
 >   java17编译
 
-# 功能介绍
-<img width="896" alt="1743504399847" src="https://github.com/user-attachments/assets/a58be390-bb94-45f9-83aa-427019b99a27" />
- 
-  1. 后缀绕过
-     
-  2. 编码解码
+# tls指纹绕过使用方法
+1.将需要绕过的域名，直接添加既可
 
-  3. 协议绕过
-     
-  4. .......
+![image](https://github.com/user-attachments/assets/a02d0a3d-8800-4ae3-9810-72d569858ca8)
 
-# 使用方法
-1.成功加载该插件
+
+# upload_fuzz使用方法
+1.成功加载该插件,smb_fuzz和下面同理
 
 2.将需要fuzz的包，传送到Intruder中
 
@@ -34,7 +32,13 @@
 
 <img width="962" alt="5bb289c7ea7184f13ce952090852061" src="https://github.com/user-attachments/assets/c7ff7855-ea31-4722-a64e-034760099bb2" />
 
+
+
 # 参考项目
 > https://github.com/T3nk0/Upload_Auto_Fuzz
 >
-> 以及一些文章，数量较多就不书列了。
+> https://github.com/shuanx/BurpFingerPrint
+>
+> https://github.com/yuziiiiiiiiii/SMS_Bomb_Fuzzer
+>
+> https://github.com/PortSwigger/bypass-bot-detection
