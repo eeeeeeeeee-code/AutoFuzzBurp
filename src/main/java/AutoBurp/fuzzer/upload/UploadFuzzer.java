@@ -1,3 +1,6 @@
+package AutoBurp.fuzzer.upload;
+
+import AutoBurp.generator.UploadPayloadGenerator;
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import burp.IIntruderAttack;
@@ -19,7 +22,7 @@ public class UploadFuzzer implements IIntruderPayloadGenerator {
 
     private final IBurpExtenderCallbacks callbacks;
 
-    public UploadFuzzer(IExtensionHelpers helpers, IIntruderAttack attack, IBurpExtenderCallbacks callbacks) { // 添加callbacks参数
+    public UploadFuzzer(IExtensionHelpers helpers, IIntruderAttack attack, IBurpExtenderCallbacks callbacks) { 
         this.helpers = helpers;
         this.attack = attack;
         this.callbacks = callbacks;
@@ -37,10 +40,10 @@ public class UploadFuzzer implements IIntruderPayloadGenerator {
     @Override
     public byte[] getNextPayload(byte[] baseValue) {
         if (!initialized) {
-            callbacks.printOutput("开始初始化payload..."); // 添加调试信息
+
             initializePayloads(baseValue);
             initialized = true;
-            callbacks.printOutput("初始化完成，共生成 " + attackPayloads.size() + " 个payload"); // 添加调试信息
+
         }
 
         if (payloadIndex >= attackPayloads.size()) {
@@ -59,7 +62,7 @@ public class UploadFuzzer implements IIntruderPayloadGenerator {
                 (selectedArea.contains("filename=") || selectedArea.contains("filename=\"")) &&
                 selectedArea.contains("Content-Type:");
         
-        callbacks.printOutput("是否为完整区域: " + isFullSection);
+
         
         if (isFullSection) {
             Matcher filenameMatcher = Pattern.compile("filename=\"([^\"]*)\"").matcher(selectedArea);
@@ -73,12 +76,12 @@ public class UploadFuzzer implements IIntruderPayloadGenerator {
                 String name = namematcher.find() ? namematcher.group(1) : "file";
                 String contentType =  contentTypeMatcher.find() ? contentTypeMatcher.group(1).trim() : "image/jpeg";
 
-                List<String> sectionPayloads = PayloadGenerator.getFuzzPayloadsForFullSection(selectedArea);
-                callbacks.printOutput("区域payload生成完成，数量: " + sectionPayloads.size()); // 添加调试信息
+                List<String> sectionPayloads = UploadPayloadGenerator.getFuzzPayloadsForFullSection(selectedArea);
+
                 
                 String template = "Content-Disposition: form-data; name=\""+name+"\"; filename=\"test." + originalExt +
                         "\"\r\nContent-Type:"+contentType;
-                List<String> singleElementPayloads = PayloadGenerator.getAttackPayloads(template);
+                List<String> singleElementPayloads = UploadPayloadGenerator.getAttackPayloads(template);
 
                 List<String> convertedPayloads = new ArrayList<>(singleElementPayloads);
 
@@ -87,23 +90,18 @@ public class UploadFuzzer implements IIntruderPayloadGenerator {
                 uniquePayloads.addAll(convertedPayloads);
                 attackPayloads = new ArrayList<>(uniquePayloads);
             } else {
-                attackPayloads = PayloadGenerator.getFuzzPayloadsForFullSection(selectedArea);
+                attackPayloads = UploadPayloadGenerator.getFuzzPayloadsForFullSection(selectedArea);
             }
         } else {
-            attackPayloads = PayloadGenerator.getAttackPayloads(selectedArea);
+            attackPayloads = UploadPayloadGenerator.getAttackPayloads(selectedArea);
         }
 
-        // 限制 payload 数量防止内存溢出
+        
         if (attackPayloads.size() > 1000) {
             attackPayloads = attackPayloads.subList(0, 1000);
         }
 
         attack.getHttpService().getHost();
-    }
-
-    private List<String> removeDuplicates(List<String> list) {
-        Set<String> set = new HashSet<>(list);
-        return new ArrayList<>(set);
     }
 
     @Override

